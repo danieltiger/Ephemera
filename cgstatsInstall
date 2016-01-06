@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp cgstats.swift ~/.bin/cgstats
+chmod +x ~/.bin/cgstats
