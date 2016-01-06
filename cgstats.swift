@@ -486,16 +486,85 @@ func shortestWordCount(posts: [Post]) -> String {
 	return "\(sortedPosts.first!.words) words about \(sortedPosts.first!.title)"
 }
 
+func mostByWeekOfYear(posts: [Post]) -> String {
+	var results = [String: [Post]]()
+
+	for post in posts {
+		let formatter  = NSDateFormatter()
+	    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+	    let date = formatter.dateFromString(post.date)!
+	    let calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+	    let components = calendar.components(.WeekOfYear, fromDate: date)
+	    let weekOfYear = "\(components.weekOfYear)"
+
+		if results[weekOfYear] == nil {
+			results[weekOfYear] = [Post]()
+		}
+
+		results[weekOfYear]?.append(post)
+	}
+
+	var most = 0
+	for (_, value) in results {
+		if value.count > most {
+			most = value.count
+		}
+	}
+
+	return "\(most)"
+}
+
+func sortByDaysOfWeek(posts: [Post]) -> [String] {
+	var results = [String: [Post]]()
+
+	for post in posts {
+		let formatter  = NSDateFormatter()
+	    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+	    let date = formatter.dateFromString(post.date)!
+	    let calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+	    let components = calendar.components(.Weekday, fromDate: date)
+	    let weekDay = components.weekday
+
+	    var day = ""
+	    switch weekDay {
+            case 1:
+                day = "Sunday"
+            case 2:
+                day = "Monday"
+            case 3:
+                day = "Tuesday"
+            case 4:
+                day = "Wednesday"
+            case 5:
+                day = "Thursday"
+            case 6:
+                day = "Friday"
+            case 7:
+                day = "Saturday"
+            default:
+                day = "Day"
+            }
+
+		if results[day] == nil {
+			results[day] = [Post]()
+		}
+
+		results[day]?.append(post)
+	}
+
+	return results.map { (key, value) in "\(key) - \(value.count)" }
+}
+
 
 // Body
 
 print("What year would you like to generate the stats for:")
-// let response = readLine(stripNewline: true)
-// guard let year = response else { 
-// 	print("Exiting because of bad input.")
-// 	fatalError()
-// }
-let year = "2015"
+let response = readLine(stripNewline: true)
+guard let year = response else { 
+	print("Exiting because of bad input.")
+	fatalError()
+}
+
 print("Generating stats for \(year)\n")
 
 let posts = generatePostListForYear(year)
@@ -527,3 +596,5 @@ print("The widest films were \(widestFilms(ratioSplits)), with an aspect ratio o
 print("The ratio counts were \(ratioCounts(ratioSplits))")
 print("You wrote \(calculateTotalWordsWritten(posts)) words this year, for an average length of \(calculateAveratePostLength(posts)) words.")
 print("My longest entry was \(longestWordCount(posts)). My shortest entry was \(shortestWordCount(posts)).")
+print("The most you posted in one week was \(mostByWeekOfYear(posts))")
+print("The days you posted were \(sortByDaysOfWeek(posts))")
