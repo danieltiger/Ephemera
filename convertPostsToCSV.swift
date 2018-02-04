@@ -2,11 +2,6 @@
 
 import Foundation
 
-// Constants
-let sourceDirectory = "/Users/arik/Development/danieltiger.github.io/source/_posts"
-let fileManager = FileManager.default
-let year = String(Calendar.current.component(.year, from: Date()))
-
 // Library
 struct Post {
 	var published = true
@@ -150,7 +145,9 @@ extension Post {
 }
 
 func posts() throws -> [Post] {
-	let filenames = try fileManager.contentsOfDirectory(atPath: sourceDirectory)
+	let year = String(Calendar.current.component(.year, from: Date()))
+	let sourceDirectory = "/Users/arik/Development/danieltiger.github.io/source/_posts"
+	let filenames = try FileManager.default.contentsOfDirectory(atPath: sourceDirectory)
 
 	var posts = [Post]()
 	for filename in filenames {
